@@ -1,6 +1,9 @@
 """Typed runtime configuration; environment parsing lives only here."""
 from dataclasses import dataclass
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 def _bool(name: str, default: bool) -> bool:
