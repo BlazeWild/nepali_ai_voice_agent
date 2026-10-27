@@ -56,28 +56,31 @@ headroom for this agent's STT process on a 12–16 GB GPU.
 - NVIDIA drivers/CUDA-compatible environment for GPU acceleration
 - The approved IndicConformer ONNX files available locally
 
-### Install the local model
+### Install Gemma 4 E2B with Ollama
+
+Install [Ollama](https://ollama.com/download), start its service, and download
+the default model:
 
 ```bash
-cp .env.example .env
-./scripts/download_models.sh
+ollama serve
+# In another terminal:
+ollama pull gemma4:e2b-it-q4_K_M
 ollama list
 ```
 
-The `.env.example` is the default full-local profile:
+The repository helper runs the same pull command:
 
-```env
-PIPELINE_PROFILE=full_local
-USE_GEMINI=false
-OLLAMA_MODEL=gemma4:e2b-it-q4_K_M
-LOCAL_LLM_PRESET=gemma_e2b
-USE_TTS=true
-STT_BACKEND=indic_conformer
+```bash
+./scripts/download_models.sh
 ```
 
-Keep `OLLAMA_NUM_CTX=1536` and leave nonessential models off the GPU. Check
-actual peak memory after loading STT and Ollama with `nvidia-smi`; runtime and
-driver overhead differ between systems.
+Create the application configuration with `cp .env.example .env`. The default
+local settings select `LLM_MODE=gemma_e2b`,
+`OLLAMA_MODEL=gemma4:e2b-it-q4_K_M`, `OLLAMA_THINK=false`, a 1536-token context, and local
+IndicConformer STT. Ollama selects CPU/GPU placement based on available
+hardware; `ollama ps` reports the actual placement after the first request.
+
+Edge TTS requires Internet access, so speech synthesis is not fully offline.
 
 ### Python dependencies
 
@@ -89,11 +92,8 @@ pip install -r requirements.txt
 
 ## Run status
 
-This repository currently provides the validated pipeline contract,
-configuration, dependencies, model-download helper, browser UI, and a streaming voice server.
-
-The intended runtime will use final STT text only, a common Gemini/Ollama
-interface, optional TTS, and latency metrics for each stage.
+The implemented path is browser microphone → streaming Silero VAD → local
+IndicConformer STT → Gemini or Ollama E2B → Edge TTS → browser playback.
 
 Run the available checks from the repository root:
 
@@ -119,7 +119,7 @@ Open `http://localhost:8000`, allow microphone access, and click the orb once to
 To use the hosted LLM, change:
 
 ```env
-USE_GEMINI=true
+LLM_MODE=gemini
 GEMINI_API_KEY=your_key_here
 ```
 
@@ -137,7 +137,7 @@ prerecorded local STT → local Gemma → TTS functional test.
 ## Layout
 
 ```text
-src/nepali_voice_agent/  application package (runtime to be added)
+src/nepali_voice_agent/  realtime application package
 docs/                    Kaggle benchmark procedure
 scripts/                 model-download-only helpers
 ```

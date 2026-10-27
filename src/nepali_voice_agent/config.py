@@ -19,6 +19,7 @@ class Settings:
     ollama_model: str = os.getenv("OLLAMA_MODEL", "gemma4:e2b-it-q4_K_M")
     ollama_num_ctx: int = int(os.getenv("OLLAMA_NUM_CTX", "1536"))
     ollama_num_predict: int = int(os.getenv("OLLAMA_NUM_PREDICT", "180"))
+    ollama_think: bool = _bool("OLLAMA_THINK", False)
     stt_backend: str = os.getenv("STT_BACKEND", "indic_conformer")
     stt_model_dir: str = os.getenv("INDIC_CONFORMER_MODEL_DIR", "../stt_research/models/indic-conformer-600m-multilingual-onnx")
     stt_only: bool = _bool("STT_ONLY", False)
