@@ -90,9 +90,7 @@ pip install -r requirements.txt
 ## Run status
 
 This repository currently provides the validated pipeline contract,
-configuration, dependencies, model-download helper, and package-level
-preflight checks. The streaming application server and browser client have not
-yet been added, so there is no production voice-server launch command yet.
+configuration, dependencies, model-download helper, browser UI, and a streaming voice server.
 
 The intended runtime will use final STT text only, a common Gemini/Ollama
 interface, optional TTS, and latency metrics for each stage.
@@ -107,6 +105,14 @@ STT_ONLY=true PYTHONPATH=src python3 -m nepali_voice_agent stt-check
 `doctor` validates the LLM profile. `stt-check` validates the required
 IndicConformer assets without loading an LLM—the right first test for STT-only
 measurement.
+
+Start the browser voice agent:
+
+```bash
+PYTHONPATH=src python3 -m nepali_voice_agent serve
+```
+
+Open `http://localhost:8000`, allow microphone access, hold the button while speaking, then release it to send a turn. Transcripts are enabled by default (`SHOW_TRANSCRIPTS=true`).
 
 ## Gemini mode
 

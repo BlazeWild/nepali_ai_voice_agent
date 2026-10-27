@@ -23,6 +23,7 @@ class Settings:
     stt_model_dir: str = os.getenv("INDIC_CONFORMER_MODEL_DIR", "../stt_research/models/indic-conformer-600m-multilingual-onnx")
     stt_only: bool = _bool("STT_ONLY", False)
     use_tts: bool = _bool("USE_TTS", True)
+    show_transcripts: bool = _bool("SHOW_TRANSCRIPTS", True)
 
     def validate(self) -> None:
         if self.llm_mode not in {"gemini", "gemma_e2b", "gemma_12b"}:

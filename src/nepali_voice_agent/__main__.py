@@ -6,10 +6,13 @@ from .profiles import PROFILES
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("command", choices=["doctor", "stt-check"])
+    parser.add_argument("command", choices=["doctor", "stt-check", "serve"])
     args = parser.parse_args()
     settings = Settings(); settings.validate()
-    if args.command == "doctor":
+    if args.command == "serve":
+        import uvicorn
+        uvicorn.run("nepali_voice_agent.server:app", host="0.0.0.0", port=8000)
+    elif args.command == "doctor":
         profile = PROFILES[settings.llm_mode]
         print(f"LLM mode: {profile.mode} ({profile.purpose})")
         print(f"STT: {settings.stt_backend}; TTS: {'on' if settings.use_tts else 'off'}")
