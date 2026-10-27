@@ -94,9 +94,8 @@ configuration, dependencies, model-download helper, and package-level
 preflight checks. The streaming application server and browser client have not
 yet been added, so there is no production voice-server launch command yet.
 
-The intended runtime must implement the architecture in
-[docs/architecture.md](docs/architecture.md): final STT text only, a common
-Gemini/Ollama interface, optional TTS, and latency metrics for each stage.
+The intended runtime will use final STT text only, a common Gemini/Ollama
+interface, optional TTS, and latency metrics for each stage.
 
 Run the available checks from the repository root:
 
@@ -109,11 +108,9 @@ STT_ONLY=true PYTHONPATH=src python3 -m nepali_voice_agent stt-check
 IndicConformer assets without loading an LLM—the right first test for STT-only
 measurement.
 
-## Profiles
+## Gemini mode
 
-See [docs/pipeline_profiles.md](docs/pipeline_profiles.md) for full-local,
-Gemini, and instruction-evaluation configuration. To use the hosted LLM,
-change only:
+To use the hosted LLM, change:
 
 ```env
 USE_GEMINI=true
@@ -133,7 +130,7 @@ runs, not for serving this real-time browser agent.
 
 ```text
 src/nepali_voice_agent/  application package (runtime to be added)
-docs/                    architecture, profiles, and benchmark procedure
+docs/                    Kaggle benchmark procedure
 scripts/                 model-download-only helpers
 ```
 

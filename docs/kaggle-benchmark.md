@@ -1,74 +1,31 @@
-# Kaggle Gemma benchmark procedure
+# Kaggle model benchmark
 
-Use this procedure to compare E2B, E4B, and 12B fairly before changing the
-local voice-agent default. It evaluates LLM quality; it does not run the
-browser/STT/TTS application.
+Use [gemma_benchmark.ipynb](../kaggle/gemma_benchmark.ipynb) as the canonical Kaggle notebook. It installs pinned package versions and runs one model at a time, releasing GPU memory between models.
 
-## Hardware selection
+## Setup
 
-| Test | Kaggle accelerator | Why |
-| --- | --- | --- |
-| E2B smoke test | T4 x1 (16 GB) | The recorded 4-bit run completed on one T4. |
-| E4B or 12B | T4 x2 | A one-T4 E4B run exhausted VRAM during generation. |
-| Full comparison | T4 x2 | Keeps the environment consistent for the larger models. |
+1. Create a Kaggle notebook and select the available **T4 x2** accelerator.
+2. Enable Internet.
+3. Accept the Gemma access terms on Hugging Face for every model being tested.
+4. Add a Hugging Face Read token as the Kaggle secret `HF_TOKEN` and enable notebook access.
+5. Upload this repository as a Kaggle Dataset, then open or copy the notebook.
 
-The earlier E4B out-of-memory event is evidence for the deployment decision,
-not a universal minimum-VRAM claim. Context length, thinking mode, batch size,
-quantization, and runtime change the peak. The fair comparison should keep
-those values identical across candidates.
+Never put the token in a code cell or save model-cache directories as outputs.
 
-## Prepare the notebook
+## Run order
 
-1. Open **Kaggle → Code → New Notebook**.
-2. Enable **Internet** in notebook settings.
-3. Select **GPU T4 x1** for E2B or **GPU T4 x2** for E4B/12B.
-4. On Hugging Face, accept the Gemma terms for every model you will test and
-   create a Read access token.
-5. Add that token as the Kaggle secret `HF_TOKEN`, then enable **Allow notebook
-   access**. Never paste it into a notebook cell.
-
-## Minimal reproducible test
-
-Install the required inference libraries in the first notebook cell:
+The notebook starts with `gemma4_e2b`. Confirm that run first, then change:
 
 ```python
-!pip install -q -U "transformers>=5.10.1" accelerate bitsandbytes sentencepiece huggingface_hub
+MODELS_TO_RUN = ["gemma4_e2b", "gemma4_e4b", "gemma4_12b"]
 ```
 
-Use these fixed controls for every candidate:
+Keep the same prompt, quantization, output-token limit, and decoding settings for every model. Record answer quality, completion time, output tokens, and peak GPU memory. E2B is the 12–16 GB voice-agent default; E4B and 12B are comparison candidates only until a concurrent STT + LLM memory test passes.
 
-```python
-REPEATS = 1
-MAX_NEW_TOKENS = 2400
-TEMPERATURE = 0.0
-ENABLE_THINKING = True
-```
+## What to evaluate
 
-First run E2B alone with `google/gemma-4-E2B-it` and 4-bit NF4 loading. After
-it succeeds, run E4B (`google/gemma-4-E4B-it`) and 12B
-(`google/gemma-4-12B-it`) one at a time, with `device_map="auto"` across both
-T4 GPUs. Limit each GPU to about `11GiB` to preserve headroom for prompt and KV
-cache allocations. Delete the model and call `torch.cuda.empty_cache()` between
-models.
-
-For each prompt, save a CSV row containing at least:
-
-```text
-model, model_id, test, prompt, answer, thinking, seconds, output_tokens,
-manual_score_0_to_5, review_notes
-```
-
-Save the CSV from `/kaggle/working/` as a notebook output before ending the
-session. Do not publish the Hugging Face token or model-cache directories.
-
-## Review criteria
-
-Score final answers, not hidden/thinking text. Check Nepali grammar,
-instruction/format compliance, response completeness, latency, and whether
-the answer invents facts. For legal or government documents, also require
-consistent placeholders for missing data and reject invented dates, names,
-legal provisions, or remedies.
-
-The expected deployment conclusion remains: E2B is the local shared-GPU voice
-profile; E4B/12B are quality benchmarks unless a separate VRAM measurement
-shows safe concurrent STT + LLM operation on the target hardware.
+- Nepali fluency and instruction following
+- Unsupported or invented claims
+- Time to first response and total generation time
+- Peak VRAM after the model, prompt, and KV cache load
+- Full voice-pipeline latency separately: endpointing, STT, LLM, TTS, playback
