@@ -27,6 +27,8 @@ class Settings:
     vad_backend: str = os.getenv("VAD_BACKEND", "silero")
     vad_threshold: float = float(os.getenv("VAD_THRESHOLD", "0.5"))
     vad_silence_ms: int = int(os.getenv("VAD_SILENCE_DURATION_MS", "600"))
+    vad_min_speech_ms: int = int(os.getenv("VAD_MIN_SPEECH_MS", "450"))
+    vad_barge_in_ms: int = int(os.getenv("VAD_BARGE_IN_MS", "350"))
 
     def validate(self) -> None:
         if self.llm_mode not in {"gemini", "gemma_e2b", "gemma_12b"}:
