@@ -130,7 +130,9 @@ Never commit `.env` or API keys.
 Use Kaggle to reproduce the E2B/E4B/12B quality comparison before changing the
 local default. The hardware setup and fair-test procedure are documented in
 [docs/kaggle-benchmark.md](docs/kaggle-benchmark.md). Kaggle is for benchmark
-runs, not for serving this real-time browser agent.
+runs, not for serving this real-time browser agent. Use
+[kaggle/voice_pipeline_test.ipynb](kaggle/voice_pipeline_test.ipynb) for a
+prerecorded local STT → local Gemma → TTS functional test.
 
 ## Layout
 
