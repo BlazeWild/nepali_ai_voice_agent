@@ -24,6 +24,9 @@ class Settings:
     stt_only: bool = _bool("STT_ONLY", False)
     use_tts: bool = _bool("USE_TTS", True)
     show_transcripts: bool = _bool("SHOW_TRANSCRIPTS", True)
+    vad_backend: str = os.getenv("VAD_BACKEND", "silero")
+    vad_threshold: float = float(os.getenv("VAD_THRESHOLD", "0.5"))
+    vad_silence_ms: int = int(os.getenv("VAD_SILENCE_DURATION_MS", "600"))
 
     def validate(self) -> None:
         if self.llm_mode not in {"gemini", "gemma_e2b", "gemma_12b"}:

@@ -112,7 +112,7 @@ Start the browser voice agent:
 PYTHONPATH=src python3 -m nepali_voice_agent serve
 ```
 
-Open `http://localhost:8000`, allow microphone access, hold the button while speaking, then release it to send a turn. Transcripts are enabled by default (`SHOW_TRANSCRIPTS=true`).
+Open `http://localhost:8000`, allow microphone access, and click the orb once to start the call. Speak naturally; Silero VAD detects speech and sends the turn automatically after silence. Click the orb again to disconnect. Transcripts are enabled by default (`SHOW_TRANSCRIPTS=true`).
 
 ## Gemini mode
 
