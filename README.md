@@ -30,13 +30,6 @@ they are not the local concurrent-voice deployment profile.
 | Gemma 4 E4B 4-bit | One 16 GB T4 exhausted memory during generation | Kaggle/high-VRAM comparison only |
 | Gemma 4 12B 4-bit | Completed only on T4 x2 | Quality ceiling / human-reviewed benchmark only |
 
-E4B's 16 GB failure was caused by the total inference footprint, not simply
-the parameter count: quantized weights, framework-reserved memory, the prompt,
-thinking tokens, and KV cache together consumed the card. The recorded failure
-was at about 14.56 GiB already in use before another allocation. It may fit
-under shorter contexts or a different runtime, but that does not leave reliable
-headroom for this agent's STT process on a 12–16 GB GPU.
-
 ## Components
 
 | Component | Default | Reason |
